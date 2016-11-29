@@ -1,10 +1,9 @@
 class Factory
-  def self.new(*attrs,&block)
-
-    my_class = Class.new do
+  def self.new(*attrs, &block)
+    Class.new do
       attr_accessor *attrs
       define_method :initialize do |*arr_args|
-        attrs.each_with_index do |attr,index|
+        attrs.each_with_index do |attr, index|
           self.send("#{attr}=",arr_args[index])
         end
       end
@@ -13,7 +12,7 @@ class Factory
           attr.is_a?(Fixnum)? send("#{attrs[attr]}") : send(attr)
       end
 
-      define_method :[]= do |attr,value|
+      define_method :[]= do |attr, value|
         attr.is_a?(Fixnum)? send("#{attrs[attr]}=",value) : send("#{attr}=",value)
       end
 
@@ -26,12 +25,13 @@ class Factory
       end
       alias_method :values, :to_a
 
+
       define_method :values_at do |*array|
         array.map {|attr|  attr.is_a?(Fixnum)? send("#{attrs[attr]}") : send(attr)}
       end
 
       define_method :eql? do |other_obj|
-        self.class == other_obj.class ? true : false
+        (self.class == other_obj.class && to_a == other_obj.to_a)? true : false
       end
       alias_method :==, :eql?
 
